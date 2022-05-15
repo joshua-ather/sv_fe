@@ -27,12 +27,18 @@ import {
   CToaster,
   CToastHeader,
 } from '@coreui/react'
+import { cilList, cilTrash } from '@coreui/icons'
 import axios from 'axios'
+import CIcon from '@coreui/icons-react'
 
 const AllPosts = () => {
   const [_posts, _setPosts] = useState([])
   const [posts, setPosts] = useState([])
   const [visible, setVisible] = useState(false)
+
+  const [publish, setPublish] = useState([])
+  const [draft, setDraft] = useState([])
+  const [thrash, setThrash] = useState([])
 
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
@@ -52,6 +58,10 @@ const AllPosts = () => {
       .then((res) => {
         _setPosts(res.data)
         setPosts(res.data)
+
+        setPublish(res.data.filter((x) => x.status === 'Publish'))
+        setDraft(res.data.filter((x) => x.status === 'Draft'))
+        setThrash(res.data.filter((x) => x.status === 'Thrash'))
       })
       .catch((error) => {
         console.error('Error', error)
@@ -155,7 +165,7 @@ const AllPosts = () => {
                 data-index="1"
                 onClick={(e) => navHandler(e)}
               >
-                Published
+                Published ({publish.length})
               </CNavLink>
             </CNavItem>
             <CNavItem>
@@ -165,7 +175,7 @@ const AllPosts = () => {
                 data-index="2"
                 onClick={(e) => navHandler(e)}
               >
-                Drafts
+                Drafts ({draft.length})
               </CNavLink>
             </CNavItem>
             <CNavItem>
@@ -175,7 +185,7 @@ const AllPosts = () => {
                 data-index="3"
                 onClick={(e) => navHandler(e)}
               >
-                Thrash
+                Thrash ({thrash.length})
               </CNavLink>
             </CNavItem>
           </CNav>
@@ -214,7 +224,7 @@ const AllPosts = () => {
                         variant="outline"
                         onClick={() => updateHandler(post.id)}
                       >
-                        Edit
+                        <CIcon icon={cilList} size="lg" />
                       </CButton>
                       <CButton
                         color="danger"
@@ -223,7 +233,7 @@ const AllPosts = () => {
                         className="mx-1"
                         onClick={() => removeHandler(post.id)}
                       >
-                        Remove
+                        <CIcon icon={cilTrash} size="lg" />
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>
@@ -293,7 +303,6 @@ const AllPosts = () => {
                 </option>
                 <option value="Publish">Publish</option>
                 <option value="Draft">Draft</option>
-                <option value="Thrash">Thrash</option>
               </CFormSelect>
             </div>
           </CForm>
